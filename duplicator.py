@@ -5,56 +5,62 @@ import openpyxl as xl
 import os
 from os.path import exists
 import shutil
+import numpy as np
+from inspect import currentframe, getframeinfo
 
-#check if file exists
-file_exists = exists('DummySheet2.xlsx')
-if file_exists:
-    print('file exists on line 12\n')
 
-if file_exists:
+
+
+#function to check that the file exists at different places in the code
+def file_exists(line_number): 
+    existence = exists('Dummysheet2.xlsx')
+    if existence:
+        print('file exists on line ' + str(line_number))
+    else:
+        print('file does not exist on line ' + str(line_number))
+    return existence
+
+existenceBool = 0
+frameinfo = getframeinfo(currentframe())
+existenceBool = file_exists(frameinfo.lineno)
+if existenceBool:
     os.remove('DummySheet2.xlsx')
+#this is to make sure the output is completely new each run
 
-#check if file exists
-file_exists = exists('DummySheet2.xlsx')
-if file_exists:
-    print('file exists on line 20\n')
-else:
-    print('file does not exist on line 20\n')
+frameinfo = getframeinfo(currentframe())
+existenceBool = file_exists(frameinfo.lineno)
 
 original = r'DummySheet.xlsx'
 target = r'DummySheet2.xlsx'
 shutil.copyfile(original, target)
 #making a fresh sheet each time it runs
 
+inDF = pd.read_excel('DummySheet.xlsx', sheet_name='Sheet1')
+outDF = pd.read_excel('DummySheet2.xlsx', sheet_name='Sheet1')
 
-inputSheet = pd.read_excel('DummySheet.xlsx', sheet_name='Sheet1')
-outputSheet = pd.read_excel('DummySheet2.xlsx', sheet_name='Sheet1')
-
-#check if file exists
-file_exists = exists('DummySheet2.xlsx')
-if file_exists:
-    print('file exists on line 48\n')
+frameinfo = getframeinfo(currentframe())
+existenceBool = file_exists(frameinfo.lineno)
 
 print("Column headings:")
-print(inputSheet.columns)
+print(inDF.columns)
 dftry = []
 
-for i in inputSheet.index:
-    if (len(str(inputSheet['GAUGE NUMBER'] [i])) > 5):
+for i in inDF.index:
+    if (len(str(inDF['GAUGE NUMBER'] [i])) > 5):
         dftry.append(True)
-        #print('need to do something here')
-        print(inputSheet['GAUGE NUMBER'] [i])
-        #inputSheet = inputSheet.append(inputSheet[i]) #causes big problem
-
-        #at this point, I need to duplicate the row, make the entry in the first slot
-        #the first #, and the entry in the second slot the second number
+        print(inDF['GAUGE NUMBER'] [i])
+        #at this point, I need to duplicate the row, make the entry in the first row
+        #the first number, and the entry in the second row the second number
     else:
         dftry.append(False)
 
+numrows = len(inDF)
 
-for i in dftry:
+x = 0
+for i in range(0,numrows):
+    #print(dftry[i])
     if dftry[i]:
-        inputsheet.append(inputsheet[i])
-
-
-print(len(inputSheet))
+        outDF.loc[i-1] = np.repeat(outDF.loc[i], 1)
+        #why isn't this working ughhhhhhhh
+        x = x + 1
+print('x is ' + str(x))
