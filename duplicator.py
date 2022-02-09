@@ -66,15 +66,23 @@ outDF.sort_values(by=['GAUGE NUMBER'], ascending=True, inplace=True)
 
 
 #now need to edit the numbers
+
+#i tried to implement the functionality of this next line for 2 hours ...
+#it literally just resets the indexes ... 
 outDF.reset_index(drop=True, inplace=True)
+
+
 for i in outDF.index:
     #think here: if 2 gauge numbers, if 2 nam numbers, if 2 of both, outliers ... 
     if ("/" in (str(outDF['GAUGE NUMBER'] [i]))):
         temp = outDF['GAUGE NUMBER'] [i]
         temp1 = temp.split('/')[0]
         temp2 = temp.split('/')[1]
-        outDF.iloc[i].replace(to_replace=temp, value=temp1)
-        outDF.iloc[i+1].replace(to_replace=temp, value=temp2)
+        #print(temp, temp1, temp2)
+        #outDF.iloc[i].replace(to_replace=temp, value=temp1)
+        #outDF.iloc[i+1].replace(to_replace=temp, value=temp2)
+        outDF.loc[i,'GAUGE NUMBER'] = temp1
+        print(outDF['GAUGE NUMBER'][i])
         print(i)
 
 
