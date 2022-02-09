@@ -20,22 +20,6 @@ def file_exists(line_number):
         print('file does not exist on line ' + str(line_number))
     return existence
 
-#function to insert a row in a specific place in a dataframe
-def Insert_row(row_number, df, row_value):
-    start_upper = 0
-    end_upper = row_number
-    start_lower = row_number
-    end_lower = df.shape[0]
-    upper_half = [*range(start_upper, end_upper, 1)]
-    lower_half = [*range(start_lower, end_lower, 1)]
-    lower_half = [x.__add__(1) for x in lower_half]
-    index_ = upper_half + lower_half
-    df.index = index_
-    df.loc[row_number] = row_value
-    df = df.sort_index()
-    #print('actually added a row?')
-    return df
-
 existenceBool = 0
 frameinfo = getframeinfo(currentframe())
 existenceBool = file_exists(frameinfo.lineno)
@@ -74,13 +58,17 @@ for i in outDF.index:
         or ("#" in (str(outDF['GAUGE NUMBER'] [i])))): #this if actually works
         print ('found one')
         print(outDF['GAUGE NUMBER'] [i])
-        Insert_row(i, outDF, outDF.loc[i]) #this is sus
-        i = i + 1
+        outDF.loc[len(outDF.index)] = outDF.loc[i]
+        
+        #i = i + 1
         x = x + 1
 print('x is ' + str(x))
+
+#trying to sort
 outDF['GAUGE NUMBER'] = outDF['GAUGE NUMBER'].astype(str)
 outDF.sort_values(by=['GAUGE NUMBER'], ascending=True, inplace=True)
 
+#trying to update and see if that helps
 writer = pd.ExcelWriter('DummySheet2.xlsx')
 outDF.to_excel(writer)
 writer.save()
