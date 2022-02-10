@@ -144,7 +144,8 @@ for i in outDF.index:
                 temp2=temp.split('(')[1]
                 temp2=temp2[:-1]
                 deletelength=len(temp2)
-                temp1=temp1[-deletelength]
+                keeplength=len(temp1)
+                temp1=temp1[:keeplength-deletelength]
                 temp1 = temp1 + temp2
                 outDF.loc[i,'GAUGE NUMBER'] = temp1
                 truth = 0
@@ -207,7 +208,8 @@ for i in outDF.index:
                 temp2=temp.split('(')[1]
                 temp2=temp2[:-1]
                 deletelength=len(temp2)
-                temp1=temp1[-deletelength]
+                keeplength=len(temp1)
+                temp1=temp1[:keeplength-deletelength]
                 temp1 = temp1 + temp2
                 outDF.loc[i,'NAM NUMBER'] = temp1
                 truth = 0
