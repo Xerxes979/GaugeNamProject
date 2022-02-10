@@ -12,12 +12,13 @@ from inspect import currentframe, getframeinfo
 
 
 #function to check that the file exists at different places in the code
+#uncomment the lines inside if you are debugging and the file won't show up
 def file_exists(line_number): 
     existence = exists('Dummysheet2.xlsx')
-    if existence:
-        print('file exists on line ' + str(line_number))
-    else:
-        print('file does not exist on line ' + str(line_number))
+    #if existence:
+    #    print('file exists on line ' + str(line_number))
+    #else:
+    #    print('file does not exist on line ' + str(line_number))
     return existence
 
 #this is to delete any old sheets
@@ -56,10 +57,12 @@ x = 0
 for i in outDF.index:
     if  ((("/" in (str(outDF['GAUGE NUMBER'] [i])))
         or ("(" in (str(outDF['GAUGE NUMBER'] [i])))
+        or ("&" in (str(outDF['GAUGE NUMBER'] [i])))
         or ("#" in (str(outDF['GAUGE NUMBER'] [i]))))
         and 
         (("/" in (str(outDF['NAM NUMBER'] [i])))
         or ("(" in (str(outDF['NAM NUMBER'] [i])))
+        or ("&" in (str(outDF['NAM NUMBER'] [i])))
         or ("#" in (str(outDF['NAM NUMBER'] [i]))))
         ): #this if actually works
         #print(outDF['GAUGE NUMBER'] [i])
@@ -67,39 +70,42 @@ for i in outDF.index:
         x = x + 1
     elif((("/" in (str(outDF['GAUGE NUMBER'] [i])))
         or ("(" in (str(outDF['GAUGE NUMBER'] [i])))
+        or ("&" in (str(outDF['GAUGE NUMBER'] [i])))
         or ("#" in (str(outDF['GAUGE NUMBER'] [i]))))
         or 
         (("/" in (str(outDF['NAM NUMBER'] [i])))
         or ("(" in (str(outDF['NAM NUMBER'] [i])))
+        or ("&" in (str(outDF['NAM NUMBER'] [i])))
         or ("#" in (str(outDF['NAM NUMBER'] [i]))))
         ):
         outDF.loc[len(outDF.index)] = outDF.loc[i]
         x = x + 1
-print('x is ' + str(x))
+print('number of lines duplicated is ' + str(x))
 
+######################################################################
+#
+# LOOK RIGHT HERE
+#
+# change 'GAUGE NUMBER' to 'NAM NUMBER' below if you want 
+# the resulting sheet to sort by nam number rather than gauge number
+######################################################################
 #sorting by gauge number
 outDF['GAUGE NUMBER'] = outDF['GAUGE NUMBER'].astype(str)
 outDF.sort_values(by=['GAUGE NUMBER'], ascending=True, inplace=True)
 
 
-#now need to edit the numbers
-
-#i tried to implement the functionality of this next line for 2 hours ...
-#it literally just resets the indexes ... 
+#resetting the indexes 
 outDF.reset_index(drop=True, inplace=True)
 
-#editing the values of gauge and nam numbers
-truth = 0
-for i in outDF.index:
-    #think here: if 2 gauge numbers, if 2 nam numbers, if 2 of both, outliers ... 
+#editing the values of gauge numbers
+truth = 0 #value to allow alternation between original and duplicate line code
+for i in outDF.index: 
     if truth == 0:
         if ("/" in (str(outDF['GAUGE NUMBER'] [i]))):
             temp = outDF['GAUGE NUMBER'] [i]
             temp1 = temp.split('/')[0]
             temp2 = temp.split('/')[1]
             outDF.loc[i,'GAUGE NUMBER'] = temp1
-            #print(outDF['GAUGE NUMBER'][i])
-            #print(i)
             truth = 1
         if ('#' in (str(outDF['GAUGE NUMBER'][i]))):
             temp = outDF['GAUGE NUMBER'][i]
@@ -113,18 +119,16 @@ for i in outDF.index:
                 truth = 1
             else:
                 temp = outDF['GAUGE NUMBER'][i]
-                temp1=temp.split('(')[0] #need to check for LH and RH and leave it
+                temp1=temp.split('(')[0]
                 outDF.loc[i,'GAUGE NUMBER'] = temp1
                 truth = 1
     else:
         if ("/" in (str(outDF['GAUGE NUMBER'] [i]))):
-            #print('in elif')
             temp = outDF['GAUGE NUMBER'] [i]
             temp2 = temp.split('/')[1]
             outDF.loc[i,'GAUGE NUMBER'] = temp2
             truth = 0
         if ("#" in (str(outDF['GAUGE NUMBER'] [i]))):
-            #print('in elif')
             temp = outDF['GAUGE NUMBER'] [i]
             temp2 = temp.split('#')[0]
             outDF.loc[i,'GAUGE NUMBER'] = temp2
@@ -154,16 +158,12 @@ for i in outDF.index:
             temp1 = temp.split('/')[0]
             temp2 = temp.split('/')[1]
             outDF.loc[i,'NAM NUMBER'] = temp1
-            #print(outDF['GAUGE NUMBER'][i])
-            #print(i)
             truth = 1
         if ("&" in (str(outDF['NAM NUMBER'] [i]))):
             temp = outDF['NAM NUMBER'] [i]
             temp1 = temp.split('&')[0]
             temp2 = temp.split('&')[1]
             outDF.loc[i,'NAM NUMBER'] = temp1
-            #print(outDF['GAUGE NUMBER'][i])
-            #print(i)
             truth = 1
         if ('#' in (str(outDF['NAM NUMBER'][i]))):
             temp = outDF['NAM NUMBER'][i]
@@ -177,24 +177,21 @@ for i in outDF.index:
                 truth = 1
             else:
                 temp = outDF['NAM NUMBER'][i]
-                temp1=temp.split('(')[0] #need to check for LH and RH and leave it
+                temp1=temp.split('(')[0]
                 outDF.loc[i,'NAM NUMBER'] = temp1
                 truth = 1
     else:
         if ("/" in (str(outDF['NAM NUMBER'] [i]))):
-            #print('in elif')
             temp = outDF['NAM NUMBER'] [i]
             temp2 = temp.split('/')[1]
             outDF.loc[i,'NAM NUMBER'] = temp2
             truth = 0
         if ("&" in (str(outDF['NAM NUMBER'] [i]))):
-            #print('in elif')
             temp = outDF['NAM NUMBER'] [i]
             temp2 = temp.split('&')[1]
             outDF.loc[i,'NAM NUMBER'] = temp2
             truth = 0
         if ("#" in (str(outDF['NAM NUMBER'] [i]))):
-            #print('in elif')
             temp = outDF['NAM NUMBER'] [i]
             temp2 = temp.split('#')[0]
             outDF.loc[i,'NAM NUMBER'] = temp2
@@ -215,14 +212,9 @@ for i in outDF.index:
                 outDF.loc[i,'NAM NUMBER'] = temp1
                 truth = 0
 
-
-#sorting by gauge number
-# outDF['GAUGE NUMBER'] = outDF['GAUGE NUMBER'].astype(str)
-# outDF.sort_values(by=['GAUGE NUMBER'], ascending=True, inplace=True)
-#for some reason commenting the above 2 lines made things work right ... not sure...
 outDF.reset_index(drop=True, inplace=True)
 
-#have to push the dataframe to the excel sheet for results to show
+#pushing the dataframe to the excel sheet
 writer = pd.ExcelWriter('DummySheet2.xlsx')
 outDF.to_excel(writer)
 writer.save()
