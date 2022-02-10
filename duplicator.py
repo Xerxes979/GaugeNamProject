@@ -71,26 +71,31 @@ outDF.sort_values(by=['GAUGE NUMBER'], ascending=True, inplace=True)
 #it literally just resets the indexes ... 
 outDF.reset_index(drop=True, inplace=True)
 
-
+truth = 0
 for i in outDF.index:
     #think here: if 2 gauge numbers, if 2 nam numbers, if 2 of both, outliers ... 
-    if ("/" in (str(outDF['GAUGE NUMBER'] [i]))):
+    if truth == 0:
+        if ("/" in (str(outDF['GAUGE NUMBER'] [i]))):
+            temp = outDF['GAUGE NUMBER'] [i]
+            temp1 = temp.split('/')[0]
+            temp2 = temp.split('/')[1]
+            outDF.loc[i,'GAUGE NUMBER'] = temp1
+            #print(outDF['GAUGE NUMBER'][i])
+            #print(i)
+            truth = 1
+    elif ("/" in (str(outDF['GAUGE NUMBER'] [i]))):
+        #print('in elif')
         temp = outDF['GAUGE NUMBER'] [i]
-        temp1 = temp.split('/')[0]
         temp2 = temp.split('/')[1]
-        #print(temp, temp1, temp2)
-        #outDF.iloc[i].replace(to_replace=temp, value=temp1)
-        #outDF.iloc[i+1].replace(to_replace=temp, value=temp2)
-        outDF.loc[i,'GAUGE NUMBER'] = temp1
-        print(outDF['GAUGE NUMBER'][i])
-        print(i)
+        outDF.loc[i,'GAUGE NUMBER'] = temp2
+        truth = 0
+
 
 
 #sorting by gauge number
-outDF['GAUGE NUMBER'] = outDF['GAUGE NUMBER'].astype(str)
-outDF.sort_values(by=['GAUGE NUMBER'], ascending=True, inplace=True)
-
-#print(outDF.loc[0, outDF.columns[0]])
+# outDF['GAUGE NUMBER'] = outDF['GAUGE NUMBER'].astype(str)
+# outDF.sort_values(by=['GAUGE NUMBER'], ascending=True, inplace=True)
+outDF.reset_index(drop=True, inplace=True)
 
 #have to push the dataframe to the excel sheet for results to show
 writer = pd.ExcelWriter('DummySheet2.xlsx')
