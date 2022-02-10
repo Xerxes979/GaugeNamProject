@@ -58,9 +58,9 @@ for i in outDF.index:
         or ("(" in (str(outDF['GAUGE NUMBER'] [i])))
         or ("#" in (str(outDF['GAUGE NUMBER'] [i]))))
         and 
-        (("/" in (str(outDF['NAM NUMBER '] [i])))
-        or ("(" in (str(outDF['NAM NUMBER '] [i])))
-        or ("#" in (str(outDF['NAM NUMBER '] [i]))))
+        (("/" in (str(outDF['NAM NUMBER'] [i])))
+        or ("(" in (str(outDF['NAM NUMBER'] [i])))
+        or ("#" in (str(outDF['NAM NUMBER'] [i]))))
         ): #this if actually works
         #print(outDF['GAUGE NUMBER'] [i])
         outDF.loc[len(outDF.index)] = outDF.loc[i]
@@ -69,9 +69,9 @@ for i in outDF.index:
         or ("(" in (str(outDF['GAUGE NUMBER'] [i])))
         or ("#" in (str(outDF['GAUGE NUMBER'] [i]))))
         or 
-        (("/" in (str(outDF['NAM NUMBER '] [i])))
-        or ("(" in (str(outDF['NAM NUMBER '] [i])))
-        or ("#" in (str(outDF['NAM NUMBER '] [i]))))
+        (("/" in (str(outDF['NAM NUMBER'] [i])))
+        or ("(" in (str(outDF['NAM NUMBER'] [i])))
+        or ("#" in (str(outDF['NAM NUMBER'] [i]))))
         ):
         outDF.loc[len(outDF.index)] = outDF.loc[i]
         x = x + 1
@@ -107,10 +107,15 @@ for i in outDF.index:
             outDF.loc[i,'GAUGE NUMBER'] = temp1
             truth = 1
         if ('(' in (str(outDF['GAUGE NUMBER'][i]))):
-            temp = outDF['GAUGE NUMBER'][i]
-            temp1=temp.split('(')[0]
-            outDF.loc[i,'GAUGE NUMBER'] = temp1
-            truth = 1
+            if ('LH' in (str(outDF['GAUGE NUMBER'][i]))):
+                truth = 1
+            elif ('RH' in (str(outDF['GAUGE NUMBER'][i]))):
+                truth = 1
+            else:
+                temp = outDF['GAUGE NUMBER'][i]
+                temp1=temp.split('(')[0] #need to check for LH and RH and leave it
+                outDF.loc[i,'GAUGE NUMBER'] = temp1
+                truth = 1
     else:
         if ("/" in (str(outDF['GAUGE NUMBER'] [i]))):
             #print('in elif')
@@ -125,16 +130,90 @@ for i in outDF.index:
             outDF.loc[i,'GAUGE NUMBER'] = temp2
             truth = 0
         if ('(' in (str(outDF['GAUGE NUMBER'][i]))):
-            temp = outDF['GAUGE NUMBER'][i]
-            temp1=temp.split('(')[0]
-            temp2=temp.split('(')[1]
-            temp2=temp2[:-1]
-            deletelength=len(temp2)
-            temp1=temp1[-deletelength]
-            temp1 = temp1 + temp2
-            outDF.loc[i,'GAUGE NUMBER'] = temp1
-            truth = 0
+            if ('LH' in (str(outDF['GAUGE NUMBER'][i]))):
+                truth = 0
+            elif ('RH' in (str(outDF['GAUGE NUMBER'][i]))):
+                truth = 0
+            else:
+                temp = outDF['GAUGE NUMBER'][i]
+                temp1=temp.split('(')[0]
+                temp2=temp.split('(')[1]
+                temp2=temp2[:-1]
+                deletelength=len(temp2)
+                temp1=temp1[-deletelength]
+                temp1 = temp1 + temp2
+                outDF.loc[i,'GAUGE NUMBER'] = temp1
+                truth = 0
 
+truth = 0
+for i in outDF.index:
+    #doing the exact same as above for nam numbers
+    if truth == 0:
+        if ("/" in (str(outDF['NAM NUMBER'] [i]))):
+            temp = outDF['NAM NUMBER'] [i]
+            temp1 = temp.split('/')[0]
+            temp2 = temp.split('/')[1]
+            outDF.loc[i,'NAM NUMBER'] = temp1
+            #print(outDF['GAUGE NUMBER'][i])
+            #print(i)
+            truth = 1
+        if ("&" in (str(outDF['NAM NUMBER'] [i]))):
+            temp = outDF['NAM NUMBER'] [i]
+            temp1 = temp.split('&')[0]
+            temp2 = temp.split('&')[1]
+            outDF.loc[i,'NAM NUMBER'] = temp1
+            #print(outDF['GAUGE NUMBER'][i])
+            #print(i)
+            truth = 1
+        if ('#' in (str(outDF['NAM NUMBER'][i]))):
+            temp = outDF['NAM NUMBER'][i]
+            temp1=temp.split('#')[0]
+            outDF.loc[i,'NAM NUMBER'] = temp1
+            truth = 1
+        if ('(' in (str(outDF['NAM NUMBER'][i]))):
+            if ('LH' in (str(outDF['NAM NUMBER'][i]))):
+                truth = 1
+            elif ('RH' in (str(outDF['NAM NUMBER'][i]))):
+                truth = 1
+            else:
+                temp = outDF['NAM NUMBER'][i]
+                temp1=temp.split('(')[0] #need to check for LH and RH and leave it
+                outDF.loc[i,'NAM NUMBER'] = temp1
+                truth = 1
+    else:
+        if ("/" in (str(outDF['NAM NUMBER'] [i]))):
+            #print('in elif')
+            temp = outDF['NAM NUMBER'] [i]
+            temp2 = temp.split('/')[1]
+            outDF.loc[i,'NAM NUMBER'] = temp2
+            truth = 0
+        if ("&" in (str(outDF['NAM NUMBER'] [i]))):
+            #print('in elif')
+            temp = outDF['NAM NUMBER'] [i]
+            temp2 = temp.split('&')[1]
+            outDF.loc[i,'NAM NUMBER'] = temp2
+            truth = 0
+        if ("#" in (str(outDF['NAM NUMBER'] [i]))):
+            #print('in elif')
+            temp = outDF['NAM NUMBER'] [i]
+            temp2 = temp.split('#')[0]
+            outDF.loc[i,'NAM NUMBER'] = temp2
+            truth = 0
+        if ('(' in (str(outDF['NAM NUMBER'][i]))):
+            if ('LH' in (str(outDF['NAM NUMBER'][i]))):
+                truth = 0
+            elif ('RH' in (str(outDF['NAM NUMBER'][i]))):
+                truth = 0
+            else:
+                temp = outDF['NAM NUMBER'][i]
+                temp1=temp.split('(')[0]
+                temp2=temp.split('(')[1]
+                temp2=temp2[:-1]
+                deletelength=len(temp2)
+                temp1=temp1[-deletelength]
+                temp1 = temp1 + temp2
+                outDF.loc[i,'NAM NUMBER'] = temp1
+                truth = 0
 
 
 #sorting by gauge number
